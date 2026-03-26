@@ -8,6 +8,16 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Rider\ProfileController;
 use App\Http\Controllers\Rider\EventApplicationController;
 
+Route::get('/sitemap.xml', function () {
+    $posts = \App\Models\BlogPost::latest()->get();
+    $events = \App\Models\Event::latest()->get();
+    
+    return response()->view('sitemap', [
+        'posts' => $posts,
+        'events' => $events,
+    ])->header('Content-Type', 'text/xml');
+});
+
 Route::get('/', function () {
     $appliedEventIds = [];
     if (Auth::check()) {
