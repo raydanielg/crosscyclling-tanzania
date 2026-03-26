@@ -136,7 +136,7 @@
         </div>
     </section>
 
-    <section
+    <section 
         id="about"
         x-data="{
             a: 0,
@@ -154,125 +154,123 @@
             init() {
                 this.timer = setInterval(() => {
                     this.a = (this.a + 1) % this.images.length;
-                }, 4200);
+                }, 5000);
             }
         }"
-        class="py-16 bg-gradient-to-b from-white via-white to-gray-50"
+        class="py-24 bg-white relative overflow-hidden"
     >
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-                <div class="space-y-6" data-aos="fade-up">
-                    <div class="text-xs font-extrabold uppercase tracking-widest text-[#2a527d]">About Cross Tanzania Cycling</div>
-                    <h2 class="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900">
-                        Cross Tanzania.
-                        <span class="text-[#2a527d]">One Cycling Community.</span>
-                    </h2>
-                    <p class="text-gray-700 leading-relaxed text-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+                <div class="space-y-8" data-aos="fade-right">
+                    <div>
+                        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#2a527d]/10 text-[#2a527d] text-xs font-bold uppercase tracking-widest mb-4">
+                            <span class="relative flex h-2 w-2">
+                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#2a527d] opacity-75"></span>
+                                <span class="relative inline-flex rounded-full h-2 w-2 bg-[#2a527d]"></span>
+                            </span>
+                            About Cross Tanzania
+                        </div>
+                        <h2 class="text-4xl sm:text-5xl font-black tracking-tight text-gray-900 leading-tight">
+                            Cross Tanzania. <br/>
+                            <span class="text-[#2a527d]">One Cycling Community.</span>
+                        </h2>
+                    </div>
+                    
+                    <p class="text-gray-600 leading-relaxed text-xl font-medium">
                         CTCMS ni mfumo wa kisasa wa kusimamia shughuli za baiskeli Tanzania—kuanzia usajili wa matukio,
                         usimamizi wa wanachama, wadau, hadi taarifa na takwimu.
                     </p>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div class="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm" data-aos="fade-up" data-aos-delay="100">
-                            <div class="flex items-start gap-3">
-                                <div class="mt-1 h-9 w-9 rounded-xl bg-[#2a527d] text-white flex items-center justify-center font-extrabold">S</div>
-                                <div>
-                                    <div class="font-extrabold text-gray-900">Secure Accounts</div>
-                                    <div class="text-sm text-gray-600 mt-1">Role-based access kwa kila aina ya mtumiaji.</div>
-                                </div>
-                            </div>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                        <div class="group p-6 rounded-3xl bg-gray-50 border border-gray-100 transition-all hover:bg-white hover:shadow-xl hover:shadow-[#2a527d]/5 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="100">
+                            <div class="h-12 w-12 rounded-2xl bg-[#2a527d] text-white flex items-center justify-center font-black text-xl mb-4 group-hover:scale-110 transition-transform">S</div>
+                            <div class="font-black text-gray-900 text-lg">Secure Accounts</div>
+                            <div class="text-sm text-gray-500 mt-2 font-medium">Role-based access kwa kila aina ya mtumiaji.</div>
                         </div>
-                        <div class="p-5 rounded-2xl bg-white border border-gray-200 shadow-sm" data-aos="fade-up" data-aos-delay="150">
-                            <div class="flex items-start gap-3">
-                                <div class="mt-1 h-9 w-9 rounded-xl bg-[#c53030] text-white flex items-center justify-center font-extrabold">E</div>
-                                <div>
-                                    <div class="font-extrabold text-gray-900">Events Management</div>
-                                    <div class="text-sm text-gray-600 mt-1">Ratiba, usajili, na uendeshaji wa matukio.</div>
-                                </div>
-                            </div>
+                        
+                        <div class="group p-6 rounded-3xl bg-gray-50 border border-gray-100 transition-all hover:bg-white hover:shadow-xl hover:shadow-red-600/5 hover:-translate-y-1" data-aos="fade-up" data-aos-delay="150">
+                            <div class="h-12 w-12 rounded-2xl bg-[#c53030] text-white flex items-center justify-center font-black text-xl mb-4 group-hover:scale-110 transition-transform">E</div>
+                            <div class="font-black text-gray-900 text-lg">Events Management</div>
+                            <div class="text-sm text-gray-500 mt-2 font-medium">Ratiba, usajili, na uendeshaji wa matukio.</div>
                         </div>
                     </div>
 
-                    <div class="rounded-2xl border border-gray-200 bg-white p-5" data-aos="fade-up" data-aos-delay="200">
-                        <div class="font-extrabold text-gray-900">What you get</div>
-                        <div class="mt-3 grid grid-cols-1 sm:grid-cols-2 gap-3 text-sm text-gray-700">
-                            <div class="flex items-start gap-2">
-                                <span class="mt-1 h-2 w-2 rounded-full bg-[#2a527d]"></span>
-                                <div>Usajili wa wanachama na usimamizi wa profiles</div>
+                    <div class="rounded-3xl border border-gray-100 bg-gray-50 p-8" data-aos="fade-up" data-aos-delay="200">
+                        <div class="font-black text-gray-900 text-xl mb-6">What you get</div>
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-y-4 gap-x-8 text-base font-bold text-gray-600">
+                            <div class="flex items-center gap-3">
+                                <svg class="h-5 w-5 text-[#2a527d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Usajili wa wanachama</span>
                             </div>
-                            <div class="flex items-start gap-2">
-                                <span class="mt-1 h-2 w-2 rounded-full bg-[#2a527d]"></span>
-                                <div>Ufuatiliaji wa wadau: sponsors & partners</div>
+                            <div class="flex items-center gap-3">
+                                <svg class="h-5 w-5 text-[#2a527d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Sponsors & Partners</span>
                             </div>
-                            <div class="flex items-start gap-2">
-                                <span class="mt-1 h-2 w-2 rounded-full bg-[#2a527d]"></span>
-                                <div>Habari, matangazo na gallery ya matukio</div>
+                            <div class="flex items-center gap-3">
+                                <svg class="h-5 w-5 text-[#2a527d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Habari & Gallery</span>
                             </div>
-                            <div class="flex items-start gap-2">
-                                <span class="mt-1 h-2 w-2 rounded-full bg-[#2a527d]"></span>
-                                <div>Takwimu na ripoti kwa maamuzi sahihi</div>
+                            <div class="flex items-center gap-3">
+                                <svg class="h-5 w-5 text-[#2a527d]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7" />
+                                </svg>
+                                <span>Takwimu & Ripoti</span>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div class="relative" data-aos="fade-left">
-                    <div class="absolute -inset-6 bg-gradient-to-br from-[#2a527d]/10 via-transparent to-[#c53030]/10 blur-2xl"></div>
-                    <div class="relative grid grid-cols-12 gap-4">
-                        <div class="col-span-12 sm:col-span-7">
-                            <div class="rounded-3xl overflow-hidden border border-gray-200 shadow-lg bg-gray-100">
-                                <template x-for="(src, idx) in images" :key="src">
-                                    <img
-                                        :src="src"
-                                        alt="Highlights"
-                                        class="w-full h-80 sm:h-96 object-cover"
-                                        x-show="a === idx"
-                                        x-transition:enter="transition ease-out duration-700"
-                                        x-transition:enter-start="opacity-0 scale-[1.02]"
-                                        x-transition:enter-end="opacity-100 scale-100"
-                                        x-transition:leave="transition ease-in duration-700"
-                                        x-transition:leave-start="opacity-100"
-                                        x-transition:leave-end="opacity-0"
-                                        x-cloak
-                                    />
-                                </template>
+                    <!-- Background Decoration -->
+                    <div class="absolute -inset-10 bg-gradient-to-br from-[#2a527d]/10 via-transparent to-[#c53030]/10 blur-3xl opacity-50"></div>
+                    
+                    <!-- Image Slider -->
+                    <div class="relative rounded-[2.5rem] overflow-hidden bg-gray-100 aspect-[4/5] shadow-2xl border-8 border-white">
+                        <template x-for="(img, index) in images" :key="index">
+                            <div 
+                                x-show="a === index"
+                                x-transition:enter="transition ease-out duration-1000"
+                                x-transition:enter-start="opacity-0 scale-110"
+                                x-transition:enter-end="opacity-100 scale-100"
+                                x-transition:leave="transition ease-in duration-1000"
+                                x-transition:leave-start="opacity-100 scale-100"
+                                x-transition:leave-end="opacity-0 scale-95"
+                                class="absolute inset-0"
+                            >
+                                <img :src="img" class="w-full h-full object-cover" alt="Cycling Experience" />
+                                <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
                             </div>
+                        </template>
+
+                        <!-- Slider Progress Dots -->
+                        <div class="absolute bottom-8 left-0 right-0 flex justify-center gap-2 z-20">
+                            <template x-for="(img, index) in images" :key="index">
+                                <button 
+                                    @click="a = index"
+                                    class="h-1.5 transition-all duration-300 rounded-full"
+                                    :class="a === index ? 'w-8 bg-white' : 'w-2 bg-white/40 hover:bg-white/60'"
+                                ></button>
+                            </template>
                         </div>
+                    </div>
 
-                        <div class="col-span-12 sm:col-span-5 grid gap-4">
-                            <div class="rounded-3xl border border-gray-200 bg-white p-5 shadow-sm">
-                                <div class="text-xs font-extrabold uppercase tracking-widest text-gray-500">Highlights</div>
-                                <div class="mt-2 text-xl font-extrabold text-gray-900">Cycling in Motion</div>
-                                <div class="mt-2 text-sm text-gray-600">Picha zinabadilika automatically kuonyesha matukio na mafanikio ya jamii.</div>
-                                <div class="mt-4 flex items-center gap-2">
-                                    <template x-for="(src, idx) in images" :key="idx">
-                                        <button
-                                            type="button"
-                                            class="h-2.5 w-2.5 rounded-full"
-                                            :class="a === idx ? 'bg-[#2a527d]' : 'bg-gray-300 hover:bg-gray-400'"
-                                            @click="a = idx"
-                                            aria-label="Go to image"
-                                        ></button>
-                                    </template>
-                                </div>
+                    <!-- Floating Badge -->
+                    <div class="absolute -bottom-6 -left-6 bg-white p-6 rounded-3xl shadow-2xl border border-gray-100 z-30" data-aos="zoom-in" data-aos-delay="400">
+                        <div class="flex items-center gap-4">
+                            <div class="flex -space-x-3">
+                                <div class="h-10 w-10 rounded-full border-2 border-white bg-gray-200"></div>
+                                <div class="h-10 w-10 rounded-full border-2 border-white bg-gray-300"></div>
+                                <div class="h-10 w-10 rounded-full border-2 border-white bg-gray-400"></div>
                             </div>
-
-                            <div class="rounded-3xl overflow-hidden border border-gray-200 shadow-sm bg-gray-100">
-                                <template x-for="(src, idx) in images" :key="src + '_mini'">
-                                    <img
-                                        :src="src"
-                                        alt="Highlights"
-                                        class="w-full h-48 object-cover"
-                                        x-show="((a + 2) % images.length) === idx"
-                                        x-transition:enter="transition ease-out duration-700"
-                                        x-transition:enter-start="opacity-0"
-                                        x-transition:enter-end="opacity-100"
-                                        x-transition:leave="transition ease-in duration-700"
-                                        x-transition:leave-start="opacity-100"
-                                        x-transition:leave-end="opacity-0"
-                                        x-cloak
-                                    />
-                                </template>
+                            <div>
+                                <div class="text-sm font-black text-gray-900">Join 500+</div>
+                                <div class="text-[10px] font-bold text-gray-500 uppercase tracking-wider">Active Cyclists</div>
                             </div>
                         </div>
                     </div>
