@@ -197,6 +197,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         unset($data['image']);
         
         $data['slots_remaining'] = $data['slots_total'];
+        $data['slug'] = \Illuminate\Support\Str::slug($data['name']) . '-' . rand(1000, 9999);
 
         \App\Models\Event::create($data);
         return redirect()->route('admin.events.index')->with('status', 'Event created successfully');
