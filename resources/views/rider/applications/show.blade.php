@@ -101,6 +101,14 @@
                         <div class="mt-2 font-extrabold text-gray-900">{{ $application->applicant_name }}</div>
                         <div class="mt-1 text-sm text-gray-600">{{ $application->applicant_phone }}</div>
                         <div class="mt-2 text-xs text-gray-500 font-semibold">Type: {{ strtoupper($application->applicant_type) }}</div>
+                        @if ($application->notes)
+                            <div class="mt-4 text-xs font-extrabold uppercase tracking-widest text-gray-500">Notes</div>
+                            <div class="mt-2 text-sm text-gray-700 leading-relaxed">{{ $application->notes }}</div>
+                        @endif
+                        @if ($application->uploaded_document_path)
+                            <div class="mt-4 text-xs font-extrabold uppercase tracking-widest text-gray-500">Uploaded document</div>
+                            <a href="{{ route('rider.my-events.document', $application) }}" class="mt-2 inline-flex items-center justify-center px-4 py-2 rounded-md bg-[#2a527d] text-white text-xs font-extrabold shadow hover:bg-[#1e3a5f] no-underline hover:no-underline">Download document</a>
+                        @endif
                     </div>
 
                     @if ($application->rider_number)

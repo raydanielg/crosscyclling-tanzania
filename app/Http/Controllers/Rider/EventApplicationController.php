@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Event;
 use App\Models\EventApplication;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class EventApplicationController extends Controller
 {
@@ -42,6 +43,8 @@ class EventApplicationController extends Controller
             'applicant_type' => ['required', 'in:self,other'],
             'other_name' => ['nullable', 'string', 'max:255'],
             'other_phone' => ['nullable', 'string', 'max:32'],
+            'notes' => ['nullable', 'string', 'max:2000'],
+            'uploaded_document' => ['nullable', 'file', 'max:5120', 'mimes:pdf,jpg,jpeg,png,doc,docx'],
         ]);
 
         $applicantType = $data['applicant_type'];
@@ -53,6 +56,11 @@ class EventApplicationController extends Controller
             ]);
         }
 
+        $uploadedDocumentPath = null;
+        if ($request->hasFile('uploaded_document')) {
+            $uploadedDocumentPath = $request->file('uploaded_document')->store('event_applications', 'public');
+        }
+
         $application = EventApplication::query()->create([
             'user_id' => $user->id,
             'event_id' => $event->id,
@@ -61,6 +69,8 @@ class EventApplicationController extends Controller
             'applicant_phone' => $applicantType === 'self' ? $user->phone : $data['other_phone'],
             'payment_status' => 'unpaid',
             'status' => 'draft',
+            'notes' => $data['notes'] ?? null,
+            'uploaded_document_path' => $uploadedDocumentPath,
         ]);
 
         return redirect()->route('rider.apply.step2', [$event, $application]);
@@ -113,6 +123,43 @@ class EventApplicationController extends Controller
         ]);
 
         return redirect()->route('rider.my-events')->with('status', 'Application submitted and pending approval');
+    }
+
+    public function downloadTemplate(Event $event)
+    {
+        $content = collect([
+            'Event Application Template',
+            '--------------------------',
+            'Event: ' . $event->name,
+            'Location: ' . ($event->location ?? '—'),
+            'Starts at: ' . ($event->starts_at ? $event->starts_at->format('M d, Y H:i') : 'TBA'),
+            'Distance: ' . ($event->distance_km ? $event->distance_km . ' KM' : '—'),
+            '',
+            'Applicant name: ______________________________',
+            'Phone: ______________________________',
+            'Applicant type: self / other',
+            'Payment method: snniper / lipa_namba',
+            'Additional notes: ______________________________',
+            '',
+            'Signature: ______________________________',
+        ])->join("\n");
+
+        return response($content, 200, [
+            'Content-Type' => 'text/plain; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . str($event->name)->slug('-')->limit(50, '') . '-application-template.txt"',
+        ]);
+    }
+
+    public function downloadDocument(EventApplication $application)
+    {
+        abort_unless($application->user_id === auth()->id(), 403);
+        abort_if(!$application->uploaded_document_path, 404);
+
+        if (!Storage::disk('public')->exists($application->uploaded_document_path)) {
+            abort(404);
+        }
+
+        return Storage::disk('public')->download($application->uploaded_document_path);
     }
 
     private function authorizeApplication(Event $event, EventApplication $application): void

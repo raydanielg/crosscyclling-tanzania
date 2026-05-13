@@ -325,17 +325,19 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
     Route::get('/events', function () {
         $user = Auth::user();
         $appliedEventIds = $user->eventApplications()->pluck('event_id')->toArray();
+        $appliedApplications = $user->eventApplications()->pluck('id', 'event_id')->toArray();
 
         $events = Event::query()
             ->orderByRaw("case status when 'open' then 1 when 'planned' then 2 when 'closed' then 3 else 4 end")
             ->latest('starts_at')
             ->paginate(10);
 
-        return view('rider.events', compact('events', 'appliedEventIds'));
+        return view('rider.events', compact('events', 'appliedEventIds', 'appliedApplications'));
     })->name('events');
 
     Route::get('/my-events', [EventApplicationController::class, 'index'])->name('my-events');
     Route::get('/my-events/{application}', [EventApplicationController::class, 'show'])->name('my-events.show');
+    Route::get('/my-events/{application}/document', [EventApplicationController::class, 'downloadDocument'])->name('my-events.document');
 
     Route::get('/events/{event}/apply', [EventApplicationController::class, 'step1'])->name('apply.step1');
     Route::post('/events/{event}/apply', [EventApplicationController::class, 'storeStep1'])->name('apply.step1.store');
@@ -343,6 +345,7 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
     Route::post('/events/{event}/apply/{application}/payment', [EventApplicationController::class, 'storeStep2'])->name('apply.step2.store');
     Route::get('/events/{event}/apply/{application}/confirm', [EventApplicationController::class, 'step3'])->name('apply.step3');
     Route::post('/events/{event}/apply/{application}/finish', [EventApplicationController::class, 'finish'])->name('apply.finish');
+    Route::get('/events/{event}/template', [EventApplicationController::class, 'downloadTemplate'])->name('apply.template');
 
     Route::get('/blogs', function () {
         $posts = BlogPost::query()->latest('published_at')->paginate(10);
