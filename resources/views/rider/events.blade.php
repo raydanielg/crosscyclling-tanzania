@@ -51,14 +51,21 @@
                             @endphp
 
                             @if ($applicationId)
-                                <a href="{{ route('rider.my-events.show', $applicationId) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-900 text-white text-xs font-extrabold shadow hover:bg-blue-700 no-underline hover:no-underline">View application</a>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                                    <a href="{{ route('rider.events.participants', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-gray-900 text-xs font-extrabold hover:bg-gray-50 no-underline hover:no-underline">View participants</a>
+                                    <a href="{{ route('rider.my-events.show', $applicationId) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-900 text-white text-xs font-extrabold shadow hover:bg-blue-700 no-underline hover:no-underline">View application</a>
+                                </div>
                             @elseif ($st === 'open' && $appStatus === 'open')
                                 <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                                    <a href="{{ route('rider.events.participants', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-gray-900 text-xs font-extrabold hover:bg-gray-50 no-underline hover:no-underline">View participants</a>
                                     <a href="{{ route('rider.apply.template', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-gray-900 text-xs font-extrabold hover:bg-gray-50 no-underline hover:no-underline">Template</a>
                                     <a href="{{ route('rider.apply.step1', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-[#2a527d] text-white text-xs font-extrabold shadow hover:bg-[#1e3a5f] no-underline hover:no-underline">Apply</a>
                                 </div>
                             @else
-                                <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">N/A</span>
+                                <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                                    <a href="{{ route('rider.events.participants', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md border border-gray-300 text-gray-900 text-xs font-extrabold hover:bg-gray-50 no-underline hover:no-underline">View participants</a>
+                                    <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">N/A</span>
+                                </div>
                             @endif
                         </td>
                         </tr>

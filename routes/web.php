@@ -335,6 +335,17 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
         return view('rider.events', compact('events', 'appliedEventIds', 'appliedApplications'));
     })->name('events');
 
+    Route::get('/events/{event}/participants', function (Event $event) {
+        $participants = EventApplication::query()
+            ->where('event_id', $event->id)
+            ->where('status', 'approved')
+            ->with('user')
+            ->orderBy('rider_number')
+            ->get();
+
+        return view('rider.events.participants', compact('event', 'participants'));
+    })->name('events.participants');
+
     Route::get('/my-events', [EventApplicationController::class, 'index'])->name('my-events');
     Route::get('/my-events/{application}', [EventApplicationController::class, 'show'])->name('my-events.show');
     Route::get('/my-events/{application}/document', [EventApplicationController::class, 'downloadDocument'])->name('my-events.document');
