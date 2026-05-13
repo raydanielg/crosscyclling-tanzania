@@ -1,10 +1,14 @@
 @extends('rider.layout')
 
 @section('content')
-    <div>
-        <div class="text-xs font-extrabold uppercase tracking-widest text-[#2a527d]">Apply</div>
-        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Step 1: Applicant details</h1>
-        <p class="mt-2 text-gray-600">Chagua kama unatumia details zako au una-apply kwa niaba ya mtu mwingine.</p>
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+            <div class="text-xs font-extrabold uppercase tracking-widest text-[#2a527d]">Apply</div>
+            <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Step 1: Applicant details</h1>
+            <p class="mt-2 text-gray-600">Chagua kama unatumia details zako au una-apply kwa niaba ya mtu mwingine.</p>
+        </div>
+
+        <a href="{{ route('rider.events.participants', $event) }}" class="inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-[#2a527d] text-white text-sm font-extrabold shadow hover:bg-[#1e3a5f]">Open participants for this event</a>
     </div>
 
     <div class="mt-6 rounded-3xl border border-gray-200 bg-white shadow-sm p-6 sm:p-8">

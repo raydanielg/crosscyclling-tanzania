@@ -127,26 +127,15 @@ class EventApplicationController extends Controller
 
     public function downloadTemplate(Event $event)
     {
-        $content = collect([
-            'Event Application Template',
-            '--------------------------',
-            'Event: ' . $event->name,
-            'Location: ' . ($event->location ?? '—'),
-            'Starts at: ' . ($event->starts_at ? $event->starts_at->format('M d, Y H:i') : 'TBA'),
-            'Distance: ' . ($event->distance_km ? $event->distance_km . ' KM' : '—'),
-            '',
-            'Applicant name: ______________________________',
-            'Phone: ______________________________',
-            'Applicant type: self / other',
-            'Payment method: snniper / lipa_namba',
-            'Additional notes: ______________________________',
-            '',
-            'Signature: ______________________________',
-        ])->join("\n");
+        $content = implode("\r\n", [
+            'Name,Phone,Type',
+            'John Doe,+255712345678,self',
+            'Jane Doe,+255798765432,other',
+        ]);
 
         return response($content, 200, [
-            'Content-Type' => 'text/plain; charset=utf-8',
-            'Content-Disposition' => 'attachment; filename="' . str($event->name)->slug('-')->limit(50, '') . '-application-template.txt"',
+            'Content-Type' => 'text/csv; charset=utf-8',
+            'Content-Disposition' => 'attachment; filename="' . str($event->name)->slug('-')->limit(50, '') . '-participants-template.csv"',
         ]);
     }
 

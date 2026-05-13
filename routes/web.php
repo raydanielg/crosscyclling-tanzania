@@ -193,6 +193,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             'bulk_data' => 'required|string',
         ]);
 
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $event->name), 0, 3));
+        $nextNumber = \App\Models\EventApplication::where('event_id', $event->id)
+            ->whereNotNull('rider_number')
+            ->count();
+
         $lines = explode("\n", trim($data['bulk_data']));
         $added = 0;
 
@@ -204,6 +209,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 $type = trim($parts[2]) ?: 'self';
 
                 if ($name && $phone) {
+                    $nextNumber++;
                     \App\Models\EventApplication::create([
                         'user_id' => auth()->id(),
                         'event_id' => $event->id,
@@ -214,6 +220,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                         'payment_method' => 'bulk',
                         'status' => 'approved',
                         'submitted_at' => now(),
+                        'rider_number' => $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
                     ]);
                     $added++;
                 }
@@ -230,6 +237,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             'csv_file' => 'required|file|mimes:csv,txt|max:2048',
         ]);
 
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $event->name), 0, 3));
+        $nextNumber = \App\Models\EventApplication::where('event_id', $event->id)
+            ->whereNotNull('rider_number')
+            ->count();
+
         $file = $request->file('csv_file');
         $content = file_get_contents($file->getRealPath());
         $lines = explode("\n", trim($content));
@@ -243,6 +255,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 $type = trim($parts[2]) ?: 'self';
 
                 if ($name && $phone) {
+                    $nextNumber++;
                     \App\Models\EventApplication::create([
                         'user_id' => auth()->id(),
                         'event_id' => $event->id,
@@ -253,6 +266,7 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                         'payment_method' => 'bulk_upload',
                         'status' => 'approved',
                         'submitted_at' => now(),
+                        'rider_number' => $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
                     ]);
                     $added++;
                 }

@@ -46,12 +46,18 @@
 
                 <form action="{{ route('admin.events.participants.upload', $event) }}" method="POST" enctype="multipart/form-data" class="mt-4 flex flex-col gap-4">
                     @csrf
-                    <input type="file" name="csv_file" accept=".csv,text/csv" class="text-sm text-gray-700" />
+                    <input id="csvFileInput" type="file" name="csv_file" accept=".csv,text/csv" class="text-sm text-gray-700" />
                     @error('csv_file')
                         <div class="text-xs text-red-600">{{ $message }}</div>
                     @enderror
                     <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-[#2a527d] text-white text-sm font-black shadow hover:bg-[#1e3a5f]">Upload CSV</button>
                 </form>
+
+                <div id="csvPreview" class="mt-6 hidden rounded-3xl border border-[#2a527d] bg-[#f0f9ff] p-4">
+                    <div class="text-xs font-black uppercase tracking-widest text-[#2a527d]">CSV preview</div>
+                    <div id="csvPreviewBody" class="mt-3 text-xs text-gray-700"></div>
+                    <div class="mt-3 text-[11px] text-gray-500">Preview shows the first rows of your CSV before upload.</div>
+                </div>
             </div>
         </div>
     </div>
@@ -91,4 +97,41 @@
             {{ $applications->links() }}
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const input = document.getElementById('csvFileInput');
+            const preview = document.getElementById('csvPreview');
+            const previewBody = document.getElementById('csvPreviewBody');
+
+            if (!input) return;
+
+            input.addEventListener('change', function () {
+                const file = this.files && this.files[0];
+                if (!file) {
+                    preview.classList.add('hidden');
+                    previewBody.innerHTML = '';
+                    return;
+                }
+
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const text = event.target.result;
+                    const rows = text.trim().split(/\r?\n/).slice(0, 6);
+
+                    if (!rows.length) {
+                        preview.classList.add('hidden');
+                        previewBody.innerHTML = '';
+                        return;
+                    }
+
+                    previewBody.innerHTML = rows.map(function (row, index) {
+                        return '<div class="py-1 border-b border-gray-200 last:border-0">' + (index + 1) + '. ' + row + '</div>';
+                    }).join('');
+                    preview.classList.remove('hidden');
+                };
+                reader.readAsText(file);
+            });
+        });
+    </script>
 @endsection
