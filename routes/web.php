@@ -437,7 +437,7 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
     })->name('events');
 
     Route::get('/events/{event}/participants', function (Event $event) {
-        $participants = EventApplication::query()
+        $participants = \App\Models\EventApplication::query()
             ->where('event_id', $event->id)
             ->where('status', 'approved')
             ->with('user')
