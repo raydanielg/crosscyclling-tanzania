@@ -41,6 +41,7 @@
                             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">Date / Time</th>
                             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">Status</th>
                             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">Slots</th>
+                            <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-widest">Participants</th>
                             <th class="px-6 py-4 text-[10px] font-black uppercase text-gray-400 tracking-widest text-right">Action</th>
                         </tr>
                     </thead>
@@ -78,6 +79,9 @@
                                 </td>
                                 <td class="px-6 py-4 text-xs font-bold text-gray-700">
                                     {{ $event->slots_remaining ?? 0 }} / {{ $event->slots_total ?? 0 }}
+                                </td>
+                                <td class="px-6 py-4 text-xs font-bold text-gray-700">
+                                    <a href="{{ route('admin.events.participants', $event) }}" class="inline-flex items-center justify-center px-3 py-1 rounded-full bg-[#2a527d] text-white text-[10px] font-black uppercase hover:bg-[#1e3a5f]">View participants</a>
                                 </td>
                                 <td class="px-6 py-4 text-right space-x-3">
                                     <button @click="openEdit({{ $event->toJson() }})" class="text-xs font-black text-gray-400 hover:text-gray-600 uppercase">Edit</button>

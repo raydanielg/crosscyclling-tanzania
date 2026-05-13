@@ -175,6 +175,93 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         return view('admin.events.index', compact('events'));
     })->name('events.index');
 
+    Route::get('/events/{event}/participants', function (\App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+        $applications = \App\Models\EventApplication::query()
+            ->where('event_id', $event->id)
+            ->with('user')
+            ->latest()
+            ->paginate(30);
+
+        return view('admin.events.participants', compact('event', 'applications'));
+    })->name('events.participants');
+
+    Route::post('/events/{event}/participants/bulk', function (\Illuminate\Http\Request $request, \App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+
+        $data = $request->validate([
+            'bulk_data' => 'required|string',
+        ]);
+
+        $lines = explode("\n", trim($data['bulk_data']));
+        $added = 0;
+
+        foreach ($lines as $line) {
+            $parts = explode(',', trim($line));
+            if (count($parts) >= 3) {
+                $name = trim($parts[0]);
+                $phone = trim($parts[1]);
+                $type = trim($parts[2]) ?: 'self';
+
+                if ($name && $phone) {
+                    \App\Models\EventApplication::create([
+                        'user_id' => auth()->id(),
+                        'event_id' => $event->id,
+                        'applicant_type' => $type,
+                        'applicant_name' => $name,
+                        'applicant_phone' => $phone,
+                        'payment_status' => 'paid',
+                        'payment_method' => 'bulk',
+                        'status' => 'approved',
+                        'submitted_at' => now(),
+                    ]);
+                    $added++;
+                }
+            }
+        }
+
+        return back()->with('status', "Added {$added} participants");
+    })->name('events.participants.bulk');
+
+    Route::post('/events/{event}/participants/upload', function (\Illuminate\Http\Request $request, \App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        $file = $request->file('csv_file');
+        $content = file_get_contents($file->getRealPath());
+        $lines = explode("\n", trim($content));
+        $added = 0;
+
+        foreach ($lines as $line) {
+            $parts = str_getcsv($line);
+            if (count($parts) >= 3) {
+                $name = trim($parts[0]);
+                $phone = trim($parts[1]);
+                $type = trim($parts[2]) ?: 'self';
+
+                if ($name && $phone) {
+                    \App\Models\EventApplication::create([
+                        'user_id' => auth()->id(),
+                        'event_id' => $event->id,
+                        'applicant_type' => $type,
+                        'applicant_name' => $name,
+                        'applicant_phone' => $phone,
+                        'payment_status' => 'paid',
+                        'payment_method' => 'bulk_upload',
+                        'status' => 'approved',
+                        'submitted_at' => now(),
+                    ]);
+                    $added++;
+                }
+            }
+        }
+
+        return back()->with('status', "Uploaded and added {$added} participants");
+    })->name('events.participants.upload');
+
     Route::post('/events', function (\Illuminate\Http\Request $request) {
         if (auth()->user()->role !== 'admin') abort(403);
         $data = $request->validate([
