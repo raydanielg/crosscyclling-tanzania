@@ -89,15 +89,19 @@
                                     <div class="mt-4 flex items-center justify-between gap-3">
                                         <div class="text-xs text-gray-500 font-bold">Start: <span class="text-gray-800">{{ $event->starts_at ? $event->starts_at->format('M d, Y \a\t H:i') : 'TBA' }}</span></div>
 
-                                        @if (Auth::check() && in_array($event->id, $appliedEventIds))
-                                            <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-100 text-blue-700 text-xs font-extrabold shadow-sm">Applied</span>
-                                        @elseif ($st === 'open' && $appStatus === 'open')
-                                            <a href="{{ route('rider.apply.step1', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-[#2a527d] text-white text-xs font-extrabold shadow hover:bg-[#1e3a5f] no-underline hover:no-underline">Apply</a>
-                                        @elseif ($st === 'closed')
-                                            <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Closed</span>
-                                        @else
-                                            <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Coming Soon</span>
-                                        @endif
+                                        <div class="flex flex-wrap items-center justify-end gap-2">
+                                            <a href="{{ route('events.participants', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-white text-[#2a527d] border border-[#2a527d] text-xs font-extrabold shadow-sm hover:bg-[#2a527d] hover:text-white no-underline hover:no-underline">View participants</a>
+
+                                            @if (Auth::check() && in_array($event->id, $appliedEventIds))
+                                                <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-100 text-blue-700 text-xs font-extrabold shadow-sm">Applied</span>
+                                            @elseif ($st === 'open' && $appStatus === 'open')
+                                                <a href="{{ route('rider.apply.step1', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-[#2a527d] text-white text-xs font-extrabold shadow hover:bg-[#1e3a5f] no-underline hover:no-underline">Apply</a>
+                                            @elseif ($st === 'closed')
+                                                <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Closed</span>
+                                            @else
+                                                <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Coming Soon</span>
+                                            @endif
+                                        </div>
                                     </div>
                                 </div>
                             </div>

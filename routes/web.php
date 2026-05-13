@@ -69,6 +69,17 @@ Route::get('/events', function (Request $request) {
     return view('landing.events', compact('events', 'status', 'counts', 'appliedEventIds'));
 })->name('events');
 
+Route::get('/events/{event}/participants', function (App\Models\Event $event) {
+    $participants = App\Models\EventApplication::query()
+        ->where('event_id', $event->id)
+        ->where('status', 'approved')
+        ->with('user')
+        ->orderBy('rider_number')
+        ->get();
+
+    return view('landing.events.participants', compact('event', 'participants'));
+})->name('events.participants');
+
 Route::view('/partners', 'landing.partners')->name('partners');
 
 Route::view('/contact', 'landing.contact')->name('contact');
