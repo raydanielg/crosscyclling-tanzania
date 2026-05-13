@@ -8,6 +8,7 @@
         </div>
         <div class="flex items-center gap-3">
             <a href="{{ route('admin.events.index') }}" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50">Back to events</a>
+            <a href="{{ route('rider.apply.template', $event) }}" class="px-4 py-2 rounded-xl bg-[#2a527d] text-sm font-bold text-white shadow hover:bg-[#1e3a5f]">Download template</a>
         </div>
     </div>
 
@@ -29,10 +30,9 @@
 
         <div class="lg:col-span-2 rounded-3xl border border-gray-200 bg-white shadow-sm p-6">
             <div class="text-sm font-black uppercase tracking-widest text-gray-400">Bulk add participants</div>
-            <p class="mt-2 text-sm text-gray-500">Use comma-separated rows: name, phone, type</p>
+            <p class="mt-2 text-sm text-gray-500">Use comma-separated rows: name, phone, type. Download the template first for the correct format.</p>
 
-            <form action="{{ route('admin.events.participants.bulk', $event) }}" method="POST" class="mt-4 space-y-4">
-                @csrf
+            <form action="{{ route('admin.events.participants.bulk', $event) }}" method="POST" class="mt-4 space-y-4">                @csrf
                 <textarea name="bulk_data" rows="4" class="w-full rounded-2xl border border-gray-200 px-4 py-3 text-sm focus:border-[#2a527d] focus:ring-0" placeholder="John Doe,+255712345678,self\nJane Mwana,+255798765432,other"></textarea>
                 @error('bulk_data')
                     <div class="text-xs text-red-600">{{ $message }}</div>
