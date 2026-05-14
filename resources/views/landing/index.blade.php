@@ -195,75 +195,12 @@
                     ];
                 @endphp
 
-<<<<<<< HEAD
                 @foreach($features as $idx => $f)
                 <div class="group p-8 rounded-[2rem] bg-white border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300" data-aos="fade-up" data-aos-delay="{{ $idx * 100 }}">
                     <div class="w-14 h-14 rounded-2xl bg-{{ $f['color'] }}-50 flex items-center justify-center text-{{ $f['color'] }}-600 mb-6 group-hover:scale-110 transition-transform">
                         <svg class="w-8 h-8" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="{{ $f['icon'] }}" />
                         </svg>
-=======
-                        $statusLabel = strtoupper($status ?: 'PLANNED');
-                        $statusColor = match ($status) {
-                            'open' => 'bg-green-500/20 text-green-100 border-green-300/30',
-                            'closed' => 'bg-red-500/20 text-red-100 border-red-300/30',
-                            default => 'bg-amber-500/20 text-amber-100 border-amber-300/30',
-                        };
-
-                        $appLabel = match ($appStatus) {
-                            'open' => 'Applications: Open',
-                            'closed' => 'Applications: Closed',
-                            default => 'Applications: Not Open',
-                        };
-                    @endphp
-
-                    <div class="rounded-3xl overflow-hidden border border-gray-200 bg-white shadow-sm hover:shadow-md transition">
-                        <div class="relative h-48">
-                            <img src="{{ $event->image_path ? asset($event->image_path) : '' }}" alt="{{ $event->name }}" class="w-full h-full object-cover" />
-                            <div class="absolute inset-0 bg-gradient-to-t from-[#0f2d4d]/90 via-[#1e3a5f]/45 to-transparent"></div>
-                            <div class="absolute left-4 right-4 top-4 flex items-center justify-between gap-3">
-                                <span class="px-3 py-1 rounded-full border text-xs font-extrabold {{ $statusColor }}">{{ $statusLabel }}</span>
-                                <span class="px-3 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-bold">{{ $appLabel }}</span>
-                            </div>
-                            <div class="absolute left-4 right-4 bottom-4">
-                                <div class="text-white font-extrabold text-lg">{{ $event->name }}</div>
-                                <div class="text-white/85 text-xs font-semibold">
-                                    {{ $event->location }}@if($event->route) ({{ $event->route }}) @endif
-                                </div>
-                                <div class="mt-2 flex flex-wrap gap-2">
-                                    @if ($event->distance_km)
-                                        <span class="px-3 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-extrabold">{{ $event->distance_km }} KM</span>
-                                    @endif
-                                    @if ($event->slots_total)
-                                        <span class="px-3 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-bold">Nafasi: {{ $event->slots_total }}</span>
-                                    @endif
-                                    @if (!is_null($event->slots_remaining))
-                                        <span class="px-3 py-1 rounded-full bg-white/15 text-white border border-white/20 text-xs font-bold">Zimebaki: {{ $event->slots_remaining }}</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-                        <div class="p-5">
-                            <p class="text-sm text-gray-600 leading-relaxed">{{ $event->description }}</p>
-                            <div class="mt-4 flex items-center justify-between gap-3">
-                                <div class="text-xs text-gray-500 font-bold">Status: <span class="text-gray-800">{{ ucfirst($status ?: 'planned') }}</span></div>
-
-                                <div class="flex flex-wrap items-center justify-end gap-2">
-                                    <a href="{{ route('events.participants', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-white text-[#2a527d] border border-[#2a527d] text-xs font-extrabold shadow-sm hover:bg-[#2a527d] hover:text-white no-underline hover:no-underline">View participants</a>
-
-                                    @if (Auth::check() && in_array($event->id, $appliedEventIds))
-                                        <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-blue-100 text-blue-700 text-xs font-extrabold shadow-sm">Applied</span>
-                                    @elseif ($status === 'open' && $appStatus === 'open')
-                                        <a href="{{ route('rider.apply.step1', $event) }}" class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-[#2a527d] text-white text-xs font-extrabold shadow hover:bg-[#1e3a5f] no-underline hover:no-underline">Apply</a>
-                                    @elseif ($status === 'closed')
-                                        <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Closed</span>
-                                    @else
-                                        <span class="inline-flex items-center justify-center px-4 py-2 rounded-md bg-gray-100 text-gray-500 text-xs font-extrabold">Coming Soon</span>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
->>>>>>> d41e8d8e5c2528702765ccf9c9341187cbca761c
                     </div>
                     <h3 class="text-xl font-black text-gray-900 mb-3">{{ $f['title'] }}</h3>
                     <p class="text-gray-500 leading-relaxed">{{ $f['desc'] }}</p>
