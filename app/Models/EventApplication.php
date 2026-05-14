@@ -21,6 +21,8 @@ class EventApplication extends Model
         'status',
         'rider_number',
         'submitted_at',
+        'notes',
+        'uploaded_document_path',
     ];
 
     protected $casts = [

@@ -69,6 +69,17 @@ Route::get('/events', function (Request $request) {
     return view('landing.events', compact('events', 'status', 'counts', 'appliedEventIds'));
 })->name('events');
 
+Route::get('/events/{event}/participants', function (App\Models\Event $event) {
+    $participants = App\Models\EventApplication::query()
+        ->where('event_id', $event->id)
+        ->where('status', 'approved')
+        ->with('user')
+        ->orderBy('rider_number')
+        ->get();
+
+    return view('landing.events.participants', compact('event', 'participants'));
+})->name('events.participants');
+
 Route::view('/partners', 'landing.partners')->name('partners');
 
 Route::view('/contact', 'landing.contact')->name('contact');
@@ -174,6 +185,107 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         $events = \App\Models\Event::latest()->paginate(15);
         return view('admin.events.index', compact('events'));
     })->name('events.index');
+
+    Route::get('/events/{event}/participants', function (\App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+        $applications = \App\Models\EventApplication::query()
+            ->where('event_id', $event->id)
+            ->with('user')
+            ->latest()
+            ->paginate(30);
+
+        return view('admin.events.participants', compact('event', 'applications'));
+    })->name('events.participants');
+
+    Route::post('/events/{event}/participants/bulk', function (\Illuminate\Http\Request $request, \App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+
+        $data = $request->validate([
+            'bulk_data' => 'required|string',
+        ]);
+
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $event->name), 0, 3));
+        $nextNumber = \App\Models\EventApplication::where('event_id', $event->id)
+            ->whereNotNull('rider_number')
+            ->count();
+
+        $lines = explode("\n", trim($data['bulk_data']));
+        $added = 0;
+
+        foreach ($lines as $line) {
+            $parts = explode(',', trim($line));
+            if (count($parts) >= 3) {
+                $name = trim($parts[0]);
+                $phone = trim($parts[1]);
+                $type = trim($parts[2]) ?: 'self';
+
+                if ($name && $phone) {
+                    $nextNumber++;
+                    \App\Models\EventApplication::create([
+                        'user_id' => auth()->id(),
+                        'event_id' => $event->id,
+                        'applicant_type' => $type,
+                        'applicant_name' => $name,
+                        'applicant_phone' => $phone,
+                        'payment_status' => 'paid',
+                        'payment_method' => 'bulk',
+                        'status' => 'approved',
+                        'submitted_at' => now(),
+                        'rider_number' => $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
+                    ]);
+                    $added++;
+                }
+            }
+        }
+
+        return back()->with('status', "Added {$added} participants");
+    })->name('events.participants.bulk');
+
+    Route::post('/events/{event}/participants/upload', function (\Illuminate\Http\Request $request, \App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+
+        $request->validate([
+            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+        ]);
+
+        $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $event->name), 0, 3));
+        $nextNumber = \App\Models\EventApplication::where('event_id', $event->id)
+            ->whereNotNull('rider_number')
+            ->count();
+
+        $file = $request->file('csv_file');
+        $content = file_get_contents($file->getRealPath());
+        $lines = explode("\n", trim($content));
+        $added = 0;
+
+        foreach ($lines as $line) {
+            $parts = str_getcsv($line);
+            if (count($parts) >= 3) {
+                $name = trim($parts[0]);
+                $phone = trim($parts[1]);
+                $type = trim($parts[2]) ?: 'self';
+
+                if ($name && $phone) {
+                    $nextNumber++;
+                    \App\Models\EventApplication::create([
+                        'user_id' => auth()->id(),
+                        'event_id' => $event->id,
+                        'applicant_type' => $type,
+                        'applicant_name' => $name,
+                        'applicant_phone' => $phone,
+                        'payment_status' => 'paid',
+                        'payment_method' => 'bulk_upload',
+                        'status' => 'approved',
+                        'submitted_at' => now(),
+                        'rider_number' => $prefix . '-' . str_pad($nextNumber, 4, '0', STR_PAD_LEFT),
+                    ]);
+                    $added++;
+                }
+            }
+        }
+
+        return back()->with('status', "Uploaded and added {$added} participants");
+    })->name('events.participants.upload');
 
     Route::post('/events', function (\Illuminate\Http\Request $request) {
         if (auth()->user()->role !== 'admin') abort(403);
@@ -325,17 +437,30 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
     Route::get('/events', function () {
         $user = Auth::user();
         $appliedEventIds = $user->eventApplications()->pluck('event_id')->toArray();
+        $appliedApplications = $user->eventApplications()->pluck('id', 'event_id')->toArray();
 
         $events = Event::query()
             ->orderByRaw("case status when 'open' then 1 when 'planned' then 2 when 'closed' then 3 else 4 end")
             ->latest('starts_at')
             ->paginate(10);
 
-        return view('rider.events', compact('events', 'appliedEventIds'));
+        return view('rider.events', compact('events', 'appliedEventIds', 'appliedApplications'));
     })->name('events');
+
+    Route::get('/events/{event}/participants', function (Event $event) {
+        $participants = \App\Models\EventApplication::query()
+            ->where('event_id', $event->id)
+            ->where('status', 'approved')
+            ->with('user')
+            ->orderBy('rider_number')
+            ->get();
+
+        return view('rider.events.participants', compact('event', 'participants'));
+    })->name('events.participants');
 
     Route::get('/my-events', [EventApplicationController::class, 'index'])->name('my-events');
     Route::get('/my-events/{application}', [EventApplicationController::class, 'show'])->name('my-events.show');
+    Route::get('/my-events/{application}/document', [EventApplicationController::class, 'downloadDocument'])->name('my-events.document');
 
     Route::get('/events/{event}/apply', [EventApplicationController::class, 'step1'])->name('apply.step1');
     Route::post('/events/{event}/apply', [EventApplicationController::class, 'storeStep1'])->name('apply.step1.store');
@@ -343,6 +468,7 @@ Route::middleware('auth')->prefix('rider')->name('rider.')->group(function () {
     Route::post('/events/{event}/apply/{application}/payment', [EventApplicationController::class, 'storeStep2'])->name('apply.step2.store');
     Route::get('/events/{event}/apply/{application}/confirm', [EventApplicationController::class, 'step3'])->name('apply.step3');
     Route::post('/events/{event}/apply/{application}/finish', [EventApplicationController::class, 'finish'])->name('apply.finish');
+    Route::get('/events/{event}/template', [EventApplicationController::class, 'downloadTemplate'])->name('apply.template');
 
     Route::get('/blogs', function () {
         $posts = BlogPost::query()->latest('published_at')->paginate(10);

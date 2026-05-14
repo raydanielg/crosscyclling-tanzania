@@ -1,17 +1,21 @@
 @extends('rider.layout')
 
 @section('content')
-    <div>
-        <div class="text-xs font-extrabold uppercase tracking-widest text-[#2a527d]">Apply</div>
-        <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Step 1: Applicant details</h1>
-        <p class="mt-2 text-gray-600">Chagua kama unatumia details zako au una-apply kwa niaba ya mtu mwingine.</p>
+    <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+        <div>
+            <div class="text-xs font-extrabold uppercase tracking-widest text-[#2a527d]">Apply</div>
+            <h1 class="mt-2 text-3xl font-extrabold tracking-tight text-gray-900">Step 1: Applicant details</h1>
+            <p class="mt-2 text-gray-600">Chagua kama unatumia details zako au una-apply kwa niaba ya mtu mwingine.</p>
+        </div>
+
+        <a href="{{ route('rider.events.participants', $event) }}" class="inline-flex items-center justify-center px-5 py-3 rounded-2xl bg-[#2a527d] text-white text-sm font-extrabold shadow hover:bg-[#1e3a5f]">Open participants for this event</a>
     </div>
 
     <div class="mt-6 rounded-3xl border border-gray-200 bg-white shadow-sm p-6 sm:p-8">
         <div class="text-sm font-extrabold text-gray-900">Event</div>
         <div class="mt-1 text-gray-700 font-semibold">{{ $event->name }} • {{ $event->location }}</div>
 
-        <form class="mt-6 space-y-5" method="POST" action="{{ route('rider.apply.step1.store', $event) }}" x-data="{ type: '{{ old('applicant_type', 'self') }}' }">
+        <form class="mt-6 space-y-5" method="POST" action="{{ route('rider.apply.step1.store', $event) }}" enctype="multipart/form-data" x-data="{ type: '{{ old('applicant_type', 'self') }}' }">
             @csrf
 
             <div class="grid gap-3">
@@ -53,9 +57,31 @@
                 </div>
             </div>
 
-            <div class="flex items-center justify-end gap-3 pt-2">
-                <a href="{{ route('rider.events') }}" class="inline-flex items-center justify-center px-5 py-2.5 rounded-md border border-gray-300 text-gray-900 font-extrabold hover:bg-white no-underline hover:no-underline">Cancel</a>
-                <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-[#2a527d] text-white font-extrabold shadow hover:bg-[#1e3a5f]">Continue</button>
+            <div class="grid gap-4 pt-2">
+                <div>
+                    <div class="text-xs font-extrabold uppercase tracking-widest text-gray-500">Additional notes</div>
+                    <textarea name="notes" rows="4" class="mt-2 w-full rounded-xl border border-gray-200 px-4 py-3 text-sm focus:border-[#2a527d] focus:ring-0" placeholder="Andika maelezo yoyote muhimu">{{ old('notes') }}</textarea>
+                    @error('notes')
+                        <div class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
+
+                <div>
+                    <div class="text-xs font-extrabold uppercase tracking-widest text-gray-500">Upload document</div>
+                    <input name="uploaded_document" type="file" class="mt-2 w-full text-sm text-gray-700" />
+                    <div class="mt-2 text-xs text-gray-500">PDF, JPG, PNG, DOC, DOCX (max 5MB)</div>
+                    @error('uploaded_document')
+                        <div class="mt-1 text-xs font-semibold text-red-600">{{ $message }}</div>
+                    @enderror
+                </div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 pt-2">
+                <a href="{{ route('rider.apply.template', $event) }}" class="inline-flex items-center justify-center px-5 py-2.5 rounded-md border border-gray-300 text-gray-900 font-extrabold hover:bg-white no-underline hover:no-underline">Download template</a>
+                <div class="flex items-center justify-end gap-3">
+                    <a href="{{ route('rider.events') }}" class="inline-flex items-center justify-center px-5 py-2.5 rounded-md border border-gray-300 text-gray-900 font-extrabold hover:bg-white no-underline hover:no-underline">Cancel</a>
+                    <button type="submit" class="inline-flex items-center justify-center px-5 py-2.5 rounded-md bg-[#2a527d] text-white font-extrabold shadow hover:bg-[#1e3a5f]">Continue</button>
+                </div>
             </div>
         </form>
     </div>
