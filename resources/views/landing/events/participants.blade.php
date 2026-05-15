@@ -79,7 +79,6 @@
                                     <tr class="bg-gray-50/50">
                                         <th class="px-10 py-5 text-left text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Rider #</th>
                                         <th class="px-10 py-5 text-left text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Full Name</th>
-                                        <th class="px-10 py-5 text-left text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Category</th>
                                         <th class="px-10 py-5 text-left text-[10px] font-black uppercase text-gray-400 tracking-[0.2em]">Status</th>
                                     </tr>
                                 </thead>
@@ -94,11 +93,6 @@
                                             <td class="px-10 py-6">
                                                 <div class="font-black text-gray-900">{{ $participant->applicant_name }}</div>
                                                 <div class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mt-0.5">Confirmed Participant</div>
-                                            </td>
-                                            <td class="px-10 py-6">
-                                                <span class="text-xs font-black text-gray-600 uppercase tracking-widest">
-                                                    {{ $participant->applicant_type }}
-                                                </span>
                                             </td>
                                             <td class="px-10 py-6">
                                                 <div class="flex items-center gap-2">
