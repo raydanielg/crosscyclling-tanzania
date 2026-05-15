@@ -283,6 +283,11 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         }
         fclose($handle);
 
+        // Update slots remaining
+        if ($added > 0) {
+            $event->decrement('slots_remaining', $added);
+        }
+
         $message = "Tayari! Washiriki {$added} wameongezwa kwa ufanisi.";
         
         if ($request->ajax()) {
@@ -299,9 +304,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
     Route::delete('/events/{event}/participants/clear', function (\App\Models\Event $event) {
         if (auth()->user()->role !== 'admin') abort(403);
         
+        $count = \App\Models\EventApplication::where('event_id', $event->id)->count();
         \App\Models\EventApplication::where('event_id', $event->id)->delete();
+
+        // Restore slots remaining
+        if ($count > 0) {
+            $event->increment('slots_remaining', $count);
+            // Ensure we don't exceed total slots
+            if ($event->slots_remaining > $event->slots_total) {
+                $event->update(['slots_remaining' => $event->slots_total]);
+            }
+        }
         
-        return back()->with('status', 'Participants wote wamefutwa kwa ufanisi.');
+        return back()->with('status', 'Participants wote wamefutwa na nafasi (slots) zimerudishwa.');
     })->name('events.participants.clear');
 
     Route::post('/events', function (\Illuminate\Http\Request $request) {
