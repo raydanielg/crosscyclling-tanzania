@@ -303,8 +303,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/Highlights', 'public');
-            $data['image_path'] = $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/Highlights'), $filename);
+            $data['image_path'] = 'images/Highlights/' . $filename;
         }
         unset($data['image']);
         
@@ -331,8 +333,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/Highlights', 'public');
-            $data['image_path'] = $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/Highlights'), $filename);
+            $data['image_path'] = 'images/Highlights/' . $filename;
         }
         unset($data['image']);
 
@@ -369,8 +373,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/Highlights', 'public');
-            $data['image_path'] = $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/Highlights'), $filename);
+            $data['image_path'] = 'images/Highlights/' . $filename;
         }
         unset($data['image']);
         
@@ -397,8 +403,10 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         ]);
 
         if ($request->hasFile('image')) {
-            $path = $request->file('image')->store('images/Highlights', 'public');
-            $data['image_path'] = $path;
+            $file = $request->file('image');
+            $filename = time() . '_' . $file->getClientOriginalName();
+            $file->move(public_path('images/Highlights'), $filename);
+            $data['image_path'] = 'images/Highlights/' . $filename;
         }
         unset($data['image']);
         
