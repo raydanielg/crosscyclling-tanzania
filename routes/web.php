@@ -287,6 +287,14 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
         return back()->with('status', "Uploaded and added {$added} participants");
     })->name('events.participants.upload');
 
+    Route::delete('/events/{event}/participants/clear', function (\App\Models\Event $event) {
+        if (auth()->user()->role !== 'admin') abort(403);
+        
+        \App\Models\EventApplication::where('event_id', $event->id)->delete();
+        
+        return back()->with('status', 'Participants wote wamefutwa kwa ufanisi.');
+    })->name('events.participants.clear');
+
     Route::post('/events', function (\Illuminate\Http\Request $request) {
         if (auth()->user()->role !== 'admin') abort(403);
         $data = $request->validate([
