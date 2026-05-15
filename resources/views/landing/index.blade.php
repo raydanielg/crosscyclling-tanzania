@@ -70,14 +70,39 @@
                     A complete digital platform designed to manage events registration, riders, sponsors, volunteers, and cycling data tracking across Tanzania.
                 </p>
                 
-                <div class="flex flex-wrap gap-4 mb-12">
+                <div class="flex flex-wrap gap-4 mb-12 items-center">
                     <a href="{{ route('register') }}" class="group inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-[#c53030] text-white font-black shadow-xl shadow-red-900/20 hover:bg-[#a22828] hover:-translate-y-1 transition-all duration-300 no-underline hover:no-underline">
                         Get Started Free
                         <svg class="w-5 h-5 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" /></svg>
                     </a>
-                    <a href="{{ route('events') }}" class="inline-flex items-center gap-2 px-8 py-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold hover:bg-white/20 transition-all duration-300 no-underline hover:no-underline">
-                        Explore Events
-                    </a>
+                    
+                    {{-- Video Play Button --}}
+                    <div x-data="{ open: false }">
+                        <button @click="open = true" class="inline-flex items-center gap-3 px-6 py-4 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white font-bold hover:bg-white/20 transition-all duration-300 group">
+                            <span class="flex h-10 w-10 items-center justify-center rounded-full bg-white text-[#0f2d4d] group-hover:scale-110 transition-transform">
+                                <svg class="w-5 h-5 ml-1" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                            </span>
+                            Watch Video
+                        </button>
+
+                        {{-- Video Modal --}}
+                        <div x-show="open" 
+                             x-transition:enter="transition ease-out duration-300"
+                             x-transition:enter-start="opacity-0"
+                             x-transition:enter-end="opacity-100"
+                             x-transition:leave="transition ease-in duration-200"
+                             x-transition:leave-start="opacity-100"
+                             x-transition:leave-end="opacity-0"
+                             class="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm"
+                             x-cloak>
+                            <div @click.away="open = false" class="relative w-full max-w-5xl aspect-video rounded-2xl overflow-hidden shadow-2xl">
+                                <button @click="open = false" class="absolute top-4 right-4 z-10 p-2 rounded-full bg-black/50 text-white hover:bg-black transition-colors">
+                                    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+                                </button>
+                                <iframe x-if="open" class="w-full h-full" src="https://www.youtube.com/embed/L23POzhJCO4?autoplay=1" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                            </div>
+                        </div>
+                    </div>
                 </div>
 
                 <div class="grid grid-cols-3 gap-8 border-t border-white/10 pt-10">
