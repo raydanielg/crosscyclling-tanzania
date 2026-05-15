@@ -2,13 +2,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="h-18 md:h-20 flex items-center justify-between">
             <a href="{{ url('/') }}" class="group flex items-center gap-3 text-gray-900 no-underline hover:no-underline">
-                <span class="inline-flex items-center justify-center rounded-2xl bg-white shadow ring-1 ring-gray-200 p-2">
-                    <img
-                        src="{{ asset('logo.png') }}"
-                        alt="CTCMS Logo"
-                        class="h-10 sm:h-11 md:h-12 w-auto object-contain drop-shadow-sm"
-                    />
-                </span>
+                <img
+                    src="{{ asset('logo.png') }}"
+                    alt="CTCMS Logo"
+                    class="h-12 sm:h-14 md:h-16 w-auto object-contain"
+                />
             </a>
 
             <nav class="hidden md:flex items-center gap-2 text-sm font-semibold text-gray-700">
