@@ -59,7 +59,7 @@
             <div class="max-w-sm mx-auto w-full">
                 <!-- Logo -->
                 <div class="flex justify-center mb-4 animate__animated animate__zoomIn">
-                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/c/c2/Coat_of_arms_of_Tanzania.svg/1200px-Coat_of_arms_of_Tanzania.svg.png" alt="Tanzania Logo" class="h-24 object-contain">
+                    <img src="{{ asset('logo.png') }}" alt="Tanzania Logo" class="h-24 object-contain">
                 </div>
 
                 <h2 class="text-2xl font-bold text-center text-gray-800 mb-6 uppercase tracking-wider">Login</h2>
