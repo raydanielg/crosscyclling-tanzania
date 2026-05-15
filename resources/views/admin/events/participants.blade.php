@@ -36,77 +36,9 @@
         </div>
     @endif
 
-    <div class="mb-12">
         <!-- Modern Upload Box -->
         <div class="rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-white p-10 hover:border-[#2a527d] transition-all group relative overflow-hidden text-center" 
-             x-data="{ 
-                fileName: '', 
-                isUploading: false,
-                uploadProgress: 0,
-                statusMessage: '',
-                statusType: '',
-                handleFile(e) {
-                    const file = e.target.files[0];
-                    if (!file) return;
-                    this.fileName = file.name;
-                    
-                    const reader = new FileReader();
-                    reader.onload = (event) => {
-                        const text = event.target.result;
-                        const rows = text.trim().split(/\r?\n/);
-                        const previewRows = rows.slice(0, 10); // Show up to 10 rows for preview
-                        
-                        document.getElementById('csvPreview').classList.remove('hidden');
-                        document.getElementById('csvPreviewBody').innerHTML = previewRows.map((row, index) => {
-                            return `<div class="py-1 border-b border-white/5 last:border-0">${index + 1}. ${row}</div>`;
-                        }).join('');
-                        
-                        if (rows.length > 10) {
-                            document.getElementById('csvPreviewBody').innerHTML += `<div class="py-2 text-blue-400 font-bold italic">... and ${rows.length - 10} more rows</div>`;
-                        }
-                    };
-                    reader.readAsText(file);
-                },
-                async uploadFile() {
-                    const fileInput = document.getElementById('csvFileInput');
-                    if (!fileInput.files.length) return;
-                    
-                    this.isUploading = true;
-                    this.statusMessage = 'Uploading and processing participants...';
-                    this.statusType = 'info';
-                    
-                    const formData = new FormData();
-                    formData.append('csv_file', fileInput.files[0]);
-                    formData.append('_token', '{{ csrf_token() }}');
-                    
-                    try {
-                        const response = await fetch('{{ route('admin.events.participants.upload', $event) }}', {
-                            method: 'POST',
-                            body: formData,
-                            headers: {
-                                'Accept': 'application/json',
-                                'X-Requested-With': 'XMLHttpRequest'
-                            }
-                        });
-                        
-                        const result = await response.json();
-                        
-                        if (response.ok) {
-                            this.statusMessage = result.message || 'Success! All participants added.';
-                            this.statusType = 'success';
-                            setTimeout(() => window.location.reload(), 1500);
-                        } else {
-                            this.statusMessage = result.message || 'Upload failed. Please check the file format.';
-                            this.statusType = 'error';
-                            this.isUploading = false;
-                        }
-                    } catch (error) {
-                        this.statusMessage = 'A connection error occurred. Please try again.';
-                        this.statusType = 'error';
-                        this.isUploading = false;
-                    }
-                }
-             }">
+             x-data="uploadComponent()">
             <div class="absolute -right-10 -top-10 h-32 w-32 bg-[#2a527d]/5 rounded-full blur-3xl group-hover:bg-[#2a527d]/10 transition-all"></div>
             
             <div class="relative max-w-xl mx-auto">
@@ -203,39 +135,76 @@
     </div>
 
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const input = document.getElementById('csvFileInput');
-            const preview = document.getElementById('csvPreview');
-            const previewBody = document.getElementById('csvPreviewBody');
-
-            if (!input) return;
-
-            input.addEventListener('change', function () {
-                const file = this.files && this.files[0];
-                if (!file) {
-                    preview.classList.add('hidden');
-                    previewBody.innerHTML = '';
-                    return;
-                }
-
-                const reader = new FileReader();
-                reader.onload = function (event) {
-                    const text = event.target.result;
-                    const rows = text.trim().split(/\r?\n/).slice(0, 6);
-
-                    if (!rows.length) {
-                        preview.classList.add('hidden');
-                        previewBody.innerHTML = '';
-                        return;
+        function uploadComponent() {
+            return {
+                fileName: '', 
+                isUploading: false,
+                uploadProgress: 0,
+                statusMessage: '',
+                statusType: '',
+                handleFile(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.fileName = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const text = event.target.result;
+                        const rows = text.trim().split(/\r?\n/);
+                        const previewRows = rows.slice(0, 10);
+                        
+                        document.getElementById('csvPreview').classList.remove('hidden');
+                        document.getElementById('csvPreviewBody').innerHTML = previewRows.map((row, index) => {
+                            return `<div class="py-1 border-b border-white/5 last:border-0">${index + 1}. ${row}</div>`;
+                        }).join('');
+                        
+                        if (rows.length > 10) {
+                            document.getElementById('csvPreviewBody').innerHTML += `<div class="py-2 text-blue-400 font-bold italic">... and ${rows.length - 10} more rows</div>`;
+                        }
+                    };
+                    reader.readAsText(file);
+                },
+                async uploadFile() {
+                    const fileInput = document.getElementById('csvFileInput');
+                    if (!fileInput.files.length) return;
+                    
+                    this.isUploading = true;
+                    this.statusMessage = 'Uploading and processing participants...';
+                    this.statusType = 'info';
+                    
+                    const formData = new FormData();
+                    formData.append('csv_file', fileInput.files[0]);
+                    formData.append('_token', '{{ csrf_token() }}');
+                    
+                    try {
+                        const response = await fetch('{{ route('admin.events.participants.upload', $event) }}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            this.statusMessage = result.message || 'Success! All participants added.';
+                            this.statusType = 'success';
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            this.statusMessage = result.message || 'Upload failed. Please check the file format.';
+                            this.statusType = 'error';
+                            this.isUploading = false;
+                        }
+                    } catch (error) {
+                        this.statusMessage = 'A connection error occurred. Please try again.';
+                        this.statusType = 'error';
+                        this.isUploading = false;
                     }
-
-                    previewBody.innerHTML = rows.map(function (row, index) {
-                        return '<div class="py-1 border-b border-gray-200 last:border-0">' + (index + 1) + '. ' + row + '</div>';
-                    }).join('');
-                    preview.classList.remove('hidden');
-                };
-                reader.readAsText(file);
-            });
-        });
+                }
+            }
+        }
     </script>
+@endsection
 @endsection
