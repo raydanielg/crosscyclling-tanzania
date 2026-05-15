@@ -253,12 +253,19 @@
                                 @endif
                             </div>
 
-                            <div class="absolute bottom-6 left-6 right-6">
-                                <div class="text-white font-black text-2xl group-hover:text-blue-300 transition-colors">{{ $event->name }}</div>
-                                <div class="flex items-center gap-2 text-white/80 text-sm mt-1">
-                                    <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
-                                    {{ $event->location }}
+                            <div class="absolute bottom-6 left-6 right-6 flex items-end justify-between gap-4">
+                                <div class="flex-1">
+                                    <div class="text-white font-black text-2xl group-hover:text-blue-300 transition-colors">{{ $event->name }}</div>
+                                    <div class="flex items-center gap-2 text-white/80 text-sm mt-1">
+                                        <svg class="w-4 h-4 text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                        {{ $event->location }}
+                                    </div>
                                 </div>
+                                <a href="{{ route('events.participants', $event) }}" class="p-2.5 rounded-xl bg-white/10 backdrop-blur-md border border-white/20 text-white hover:bg-white/20 transition-all shadow-lg group-hover:scale-110" title="View Participants">
+                                    <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+                                    </svg>
+                                </a>
                             </div>
                         </div>
 

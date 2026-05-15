@@ -21,6 +21,11 @@ class Event extends Model
         'starts_at',
     ];
 
+    public function applications()
+    {
+        return $this->hasMany(EventApplication::class);
+    }
+
     protected $casts = [
         'starts_at' => 'datetime',
         'distance_km' => 'integer',
