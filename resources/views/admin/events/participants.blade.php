@@ -10,6 +10,13 @@
         <div class="flex flex-wrap items-center gap-3">
             <a href="{{ route('admin.events.index') }}" class="px-4 py-2 rounded-xl border border-gray-200 text-sm font-bold text-gray-700 hover:bg-gray-50">Back to events</a>
             
+            <a href="{{ route('rider.apply.template', $event) }}" class="px-4 py-2 rounded-xl bg-blue-50 text-[#2a527d] border border-blue-100 text-sm font-bold hover:bg-[#2a527d] hover:text-white transition-all flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download Excel Template
+            </a>
+
             <form action="{{ route('admin.events.participants.clear', $event) }}" method="POST" onsubmit="return confirm('WARNING: Hii itafuta washiriki WOTE wa event hii. Je, una uhakika?')">
                 @csrf
                 @method('DELETE')
