@@ -38,7 +38,75 @@
 
     <div class="mb-12">
         <!-- Modern Upload Box -->
-        <div class="rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-white p-10 hover:border-[#2a527d] transition-all group relative overflow-hidden text-center" x-data="{ fileName: '', showPreview: false }">
+        <div class="rounded-[2.5rem] border-2 border-dashed border-gray-200 bg-white p-10 hover:border-[#2a527d] transition-all group relative overflow-hidden text-center" 
+             x-data="{ 
+                fileName: '', 
+                isUploading: false,
+                uploadProgress: 0,
+                statusMessage: '',
+                statusType: '',
+                handleFile(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+                    this.fileName = file.name;
+                    
+                    const reader = new FileReader();
+                    reader.onload = (event) => {
+                        const text = event.target.result;
+                        const rows = text.trim().split(/\r?\n/);
+                        const previewRows = rows.slice(0, 10); // Show up to 10 rows for preview
+                        
+                        document.getElementById('csvPreview').classList.remove('hidden');
+                        document.getElementById('csvPreviewBody').innerHTML = previewRows.map((row, index) => {
+                            return `<div class="py-1 border-b border-white/5 last:border-0">${index + 1}. ${row}</div>`;
+                        }).join('');
+                        
+                        if (rows.length > 10) {
+                            document.getElementById('csvPreviewBody').innerHTML += `<div class="py-2 text-blue-400 font-bold italic">... and ${rows.length - 10} more rows</div>`;
+                        }
+                    };
+                    reader.readAsText(file);
+                },
+                async uploadFile() {
+                    const fileInput = document.getElementById('csvFileInput');
+                    if (!fileInput.files.length) return;
+                    
+                    this.isUploading = true;
+                    this.statusMessage = 'Uploading and processing participants...';
+                    this.statusType = 'info';
+                    
+                    const formData = new FormData();
+                    formData.append('csv_file', fileInput.files[0]);
+                    formData.append('_token', '{{ csrf_token() }}');
+                    
+                    try {
+                        const response = await fetch('{{ route('admin.events.participants.upload', $event) }}', {
+                            method: 'POST',
+                            body: formData,
+                            headers: {
+                                'Accept': 'application/json',
+                                'X-Requested-With': 'XMLHttpRequest'
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (response.ok) {
+                            this.statusMessage = result.message || 'Success! All participants added.';
+                            this.statusType = 'success';
+                            setTimeout(() => window.location.reload(), 1500);
+                        } else {
+                            this.statusMessage = result.message || 'Upload failed. Please check the file format.';
+                            this.statusType = 'error';
+                            this.isUploading = false;
+                        }
+                    } catch (error) {
+                        this.statusMessage = 'A connection error occurred. Please try again.';
+                        this.statusType = 'error';
+                        this.isUploading = false;
+                    }
+                }
+             }">
             <div class="absolute -right-10 -top-10 h-32 w-32 bg-[#2a527d]/5 rounded-full blur-3xl group-hover:bg-[#2a527d]/10 transition-all"></div>
             
             <div class="relative max-w-xl mx-auto">
@@ -46,21 +114,20 @@
                     <div class="h-20 w-20 rounded-3xl bg-blue-50 flex items-center justify-center text-[#2a527d] mx-auto mb-4 group-hover:scale-110 transition-transform">
                         <svg class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12" /></svg>
                     </div>
-                    <h3 class="text-2xl font-black text-gray-900 mb-2">Upload Excel / CSV List</h3>
-                    <p class="text-sm text-gray-500 font-bold uppercase tracking-widest">Columns required: <span class="text-red-600">name, phone, type</span></p>
+                    <h3 class="text-2xl font-black text-gray-900 mb-2">Smart Participant Upload</h3>
+                    <p class="text-sm text-gray-500 font-bold uppercase tracking-widest">Excel / CSV: <span class="text-[#2a527d]">name, phone, type</span></p>
                 </div>
 
-                <form action="{{ route('admin.events.participants.upload', $event) }}" method="POST" enctype="multipart/form-data" class="space-y-6">
-                    @csrf
-                    <div class="relative group/input">
+                <div class="space-y-6">
+                    <div class="relative group/input" x-show="!isUploading">
                         <input id="csvFileInput" type="file" name="csv_file" accept=".csv,text/csv" 
-                            @change="fileName = $event.target.files[0].name; showPreview = true"
+                            @change="handleFile($event)"
                             class="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10" />
                         
                         <div class="border-2 border-gray-100 rounded-[2rem] p-10 bg-gray-50 group-hover/input:bg-white group-hover/input:border-[#2a527d] transition-all border-dashed">
                             <div x-show="!fileName">
                                 <span class="text-base font-black text-gray-400 group-hover/input:text-[#2a527d]">Bonyeza hapa au buruta faili lako hapa</span>
-                                <p class="text-xs text-gray-400 mt-2">Inakubali faili za CSV pekee kwa sasa</p>
+                                <p class="text-xs text-gray-400 mt-2">Sasa inachukua washiriki wote kwa mpigo</p>
                             </div>
                             <div x-show="fileName" x-cloak class="flex items-center justify-center gap-3">
                                 <svg class="w-6 h-6 text-green-500" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" /></svg>
@@ -69,15 +136,19 @@
                         </div>
                     </div>
 
-                    @error('csv_file')
-                        <div class="text-xs text-red-600 font-bold bg-red-50 py-2 rounded-lg">{{ $message }}</div>
-                    @enderror
+                    <!-- Upload Progress/Status -->
+                    <div x-show="isUploading" x-cloak class="py-10 animate__animated animate__pulse animate__infinite">
+                        <div class="h-2 w-full bg-gray-100 rounded-full overflow-hidden mb-4">
+                            <div class="h-full bg-[#2a527d] transition-all duration-500" :style="`width: ${uploadProgress}%`" :class="statusType === 'error' ? 'bg-red-500' : ''"></div>
+                        </div>
+                        <p class="text-sm font-black uppercase tracking-widest" :class="statusType === 'error' ? 'text-red-600' : 'text-[#2a527d]'" x-text="statusMessage"></p>
+                    </div>
 
                     <div id="csvPreview" class="hidden text-left animate__animated animate__fadeIn">
                         <div class="bg-gray-900 rounded-[1.5rem] p-6 shadow-2xl">
                             <div class="flex items-center justify-between mb-4">
-                                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Data Preview (First 5 rows)</div>
-                                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Verify before upload</span>
+                                <div class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Previewing List</div>
+                                <span class="text-[10px] font-black text-blue-400 uppercase tracking-widest">Checking data format...</span>
                             </div>
                             <div id="csvPreviewBody" class="text-xs text-white/80 font-mono space-y-2 divide-y divide-white/5">
                                 <!-- Preview rows will be injected here -->
@@ -85,12 +156,12 @@
                         </div>
                     </div>
 
-                    <div x-show="fileName" x-cloak class="animate__animated animate__zoomIn">
-                        <button type="submit" class="w-full inline-flex items-center justify-center px-8 py-5 rounded-2xl bg-[#2a527d] text-white text-lg font-black shadow-2xl shadow-blue-900/20 hover:bg-[#1e3a5f] hover:-translate-y-1 transition-all">
-                            Confirm and Upload List
+                    <div x-show="fileName && !isUploading" x-cloak class="animate__animated animate__zoomIn">
+                        <button type="button" @click="uploadFile()" class="w-full inline-flex items-center justify-center px-8 py-5 rounded-2xl bg-[#2a527d] text-white text-lg font-black shadow-2xl shadow-blue-900/20 hover:bg-[#1e3a5f] hover:-translate-y-1 transition-all">
+                            Confirm and Start Upload
                         </button>
                     </div>
-                </form>
+                </div>
             </div>
         </div>
     </div>

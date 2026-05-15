@@ -243,9 +243,8 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
 
     Route::post('/events/{event}/participants/upload', function (\Illuminate\Http\Request $request, \App\Models\Event $event) {
         if (auth()->user()->role !== 'admin') abort(403);
-
         $request->validate([
-            'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+            'csv_file' => 'required|file|mimes:csv,txt|max:5120',
         ]);
 
         $prefix = strtoupper(substr(preg_replace('/[^A-Za-z0-9]/', '', $event->name), 0, 3));
@@ -254,23 +253,22 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
             ->count();
 
         $file = $request->file('csv_file');
-        $content = file_get_contents($file->getRealPath());
-        $lines = explode("\n", trim($content));
+        $handle = fopen($file->getRealPath(), "r");
         $added = 0;
+        $headers = fgetcsv($handle); // Skip header row
 
-        foreach ($lines as $line) {
-            $parts = str_getcsv($line);
-            if (count($parts) >= 3) {
+        while (($parts = fgetcsv($handle)) !== FALSE) {
+            if (count($parts) >= 2) { // Allow at least name and phone
                 $name = trim($parts[0]);
                 $phone = trim($parts[1]);
-                $type = trim($parts[2]) ?: 'self';
+                $type = isset($parts[2]) ? trim($parts[2]) : 'self';
 
                 if ($name && $phone) {
                     $nextNumber++;
                     \App\Models\EventApplication::create([
                         'user_id' => auth()->id(),
                         'event_id' => $event->id,
-                        'applicant_type' => $type,
+                        'applicant_type' => strtolower($type) ?: 'self',
                         'applicant_name' => $name,
                         'applicant_phone' => $phone,
                         'payment_status' => 'paid',
@@ -283,8 +281,19 @@ Route::middleware(['auth'])->prefix('admin')->name('admin.')->group(function () 
                 }
             }
         }
+        fclose($handle);
 
-        return back()->with('status', "Uploaded and added {$added} participants");
+        $message = "Tayari! Washiriki {$added} wameongezwa kwa ufanisi.";
+        
+        if ($request->ajax()) {
+            return response()->json([
+                'success' => true,
+                'message' => $message,
+                'added' => $added
+            ]);
+        }
+
+        return back()->with('status', $message);
     })->name('events.participants.upload');
 
     Route::delete('/events/{event}/participants/clear', function (\App\Models\Event $event) {
